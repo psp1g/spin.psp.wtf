@@ -14,6 +14,9 @@ const config = {
             allow: [ 'static' ],
         },
     },
+    build: {
+        assetsInlineLimit: 0,
+    },
 };
 
 export default config;
