@@ -1,7 +1,7 @@
 <script>
 	import click from "$lib/action/click";
-	// import TabOption from "$lib/components/TabOption.svelte";
-	// import { GAME_TYPE } from "$lib/config/game.js";
+	import TabOption from "$lib/components/TabOption.svelte";
+	import { GAME_TYPE } from "$lib/config/game.js";
 	import { tick } from "svelte";
 	import { url } from "$lib/util";
 	import { duration, currentItems, editorOpen, gameType } from "$lib/stores/game";
@@ -50,11 +50,11 @@
 				<div class="icon" style:--mask={url(durationSVG)} />
 			</div>
 
-<!--			<TabOption-->
-<!--				value={$gameType}-->
-<!--				bindTo={gameType}-->
-<!--				options={Object.entries(GAME_TYPE)}-->
-<!--			/>-->
+			<TabOption
+				value={$gameType}
+				bindTo={gameType}
+				options={Object.entries(GAME_TYPE)}
+			/>
 		</div>
 
 		<div class="sub-title">Items</div>
@@ -66,20 +66,27 @@
 		</div>
 
 		<div class="buttons">
-			<button
-				class="new-hidden"
-				on:focus={newItem}
-			/>
-			<button
-				class="new"
-				use:click={newItem}
-				style:--mask={url(plusSVG)}
-			/>
-			<button
-				class="shuffle"
-				use:click={() => currentItems.shuffle()}
-				style:--mask={url(shuffleSVG)}
-			></button>
+			<div class="left">
+				<button class="game-list" use:click={() => {}}>
+					Game List
+				</button>
+			</div>
+			<div class="right">
+				<button
+					class="new-hidden"
+					on:focus={newItem}
+				/>
+				<button
+					class="mask new"
+					use:click={newItem}
+					style:--mask={url(plusSVG)}
+				/>
+				<button
+					class="mask shuffle"
+					use:click={() => currentItems.shuffle()}
+					style:--mask={url(shuffleSVG)}
+				/>
+			</div>
 		</div>
 	</div>
 </div>
@@ -231,55 +238,68 @@
 			}
 
 			.buttons {
-				gap: 6px;
-				font-size: 0;
 				display: flex;
-				flex-flow: row-reverse;
 
-				.new-hidden {
-					width: 0;
-					height: 0;
-					padding: 0;
-					border: none;
-					position: absolute;
-					background: transparent;
+				.left, .right {
+					gap: 6px;
+					font-size: 0;
+					display: flex;
+					flex-grow: 1;
+					flex-shrink: 1;
+				}
+				.right {
+					flex-flow: row-reverse;
+
+					.new-hidden {
+						width: 0;
+						height: 0;
+						padding: 0;
+						border: none;
+						position: absolute;
+						background: transparent;
+					}
+
+					.new {
+						--bg-color: #0a8a32;
+						--bg-focus: #0f9f3e;
+					}
 				}
 
-				.new {
-					--color: #0a8a32;
-					--focus: #0f9f3e;
-				}
-
-				.shuffle {
-					--color: #fff;
-					--focus: #fff;
+				.shuffle, .game-list {
+					--bg-color: #4e6481;
+					--bg-focus: #485d79;
 				}
 
 				button:not(.new-hidden) {
+					color: #fff;
+					font-weight: 600;
 					border: none;
 					border-radius: 6px;
-					background: #0a8a32;
+					background: var(--bg-color);
 					padding: 8px;
-					width: 40px;
 					height: 40px;
 					position: relative;
 
-					&::after {
-						content: "";
-						position: absolute;
-						top: 0;
-						left: 0;
-						width: 100%;
-						height: 100%;
-						background: #cecccc;
-						mask: var(--mask) center/contain no-repeat;
-						mask-size: 65%;
-						mask-origin: content-box;
+					&.mask {
+						width: 40px;
+
+						&::after {
+							content: "";
+							position: absolute;
+							top: 0;
+							left: 0;
+							width: 100%;
+							height: 100%;
+							background: #cecccc;
+							mask: var(--mask) center/contain no-repeat;
+							mask-size: 65%;
+							mask-origin: content-box;
+						}
 					}
 
 					&:hover {
 						cursor: pointer;
-						background: #0f9f3e;
+						background: var(--bg-focus);
 					}
 				}
 			}

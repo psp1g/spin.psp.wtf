@@ -3,6 +3,6 @@
  * @enum {string}
  */
 export const GAME_TYPE = {
-	Case: 'case',
+	// Case: 'case',
 	Wheel: 'wheel',
 };
