@@ -1,6 +1,6 @@
 import localforage from "localforage";
 import { writable } from "svelte/store";
-import { randomStr } from "$lib/util";
+import { randomStr } from "$lib/util/index.js";
 
 /**
  * @template T

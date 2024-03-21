@@ -1,9 +1,9 @@
-import { persisted } from "$lib/stores/persist.js";
 import localforage from "localforage";
+import { derived, writable } from "svelte/store";
+import { persisted } from "$lib/stores/class/persist";
 import { defaultGame } from "$lib/config/defaultItems";
 import { debounce, shuffle } from "$lib/util";
 import { cycleColors } from "$lib/util/color";
-import { derived, writable } from "svelte/store";
 
 const itemProps = [ "name", "color", "weight" ];
 

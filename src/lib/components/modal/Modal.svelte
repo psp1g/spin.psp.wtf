@@ -1,7 +1,7 @@
 <script>
+	import { fade } from "svelte/transition";
 	import click from "$lib/action/click";
 	import { currentModal, modalData } from "$lib/stores/modal";
-	import { fade } from "svelte/transition";
 
 	const close = () => currentModal.set(undefined);
 	const escape = (e) => e.code === 'Escape' && close();

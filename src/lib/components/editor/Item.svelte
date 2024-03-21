@@ -3,15 +3,15 @@
 	import { writable } from "svelte/store"
 
 	import click from "$lib/action/click";
-	import { url } from "$lib/util";
+	import { url } from "$lib/util/index";
 	import { currentItems, editorOpen, totalWeight } from "$lib/stores/game";
 
 	import diceSVG from "$lib/images/dice.svg";
 	import downSVG from "$lib/images/down.svg";
 	import infoSVG from "$lib/images/info.svg";
 
-	import ColorPicker from "$lib/components/ColorPicker.svelte";
-	import EmergingTextInput from "$lib/components/EmergingTextInput.svelte";
+	import ColorPicker from "$lib/components/input/ColorPicker.svelte";
+	import EmergingTextInput from "$lib/components/input/EmergingTextInput.svelte";
 
 	export let i;
 

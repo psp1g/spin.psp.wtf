@@ -1,13 +1,13 @@
 <script>
 	import click from "$lib/action/click";
-	import TabOption from "$lib/components/TabOption.svelte";
-	import { GAME_TYPE } from "$lib/config/game.js";
+	import { GAME_TYPE } from "$lib/config/game";
 	import { tick } from "svelte";
-	import { url } from "$lib/util";
+	import { url } from "$lib/util/index";
 	import { duration, currentItems, editorOpen, gameType } from "$lib/stores/game";
 
-	import Item from "$lib/components/Item.svelte";
-	import EmergingTextInput from "$lib/components/EmergingTextInput.svelte";
+	import Item from "$lib/components/editor/Item.svelte";
+	import TabOption from "$lib/components/input/TabOption.svelte";
+	import EmergingTextInput from "$lib/components/input/EmergingTextInput.svelte";
 
 	import gearSVG from "$lib/images/gear.svg";
 	import plusSVG from "$lib/images/plus.svg";

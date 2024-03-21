@@ -1,5 +1,5 @@
 import { derived, writable } from "svelte/store";
-import { isFnc, optCall } from "$lib/util";
+import { isFnc, optCall } from "$lib/util/index.js";
 
 export const isListed = (cState, states, isWhitelist = false) =>
 	states.includes(cState) ? isWhitelist : !isWhitelist;

@@ -1,5 +1,5 @@
 <script>
-	import Chart from "$lib/components/Chart.svelte";
+	import { createEventDispatcher, onMount } from "svelte";
 	import { SPIN_STATE } from "$lib/config/states";
 	import { currentGame, currentItems } from "$lib/stores/game";
 	import {
@@ -11,7 +11,7 @@
 		spinState,
 		wheelChart,
 	} from "$lib/stores/wheel";
-	import { createEventDispatcher, onMount } from "svelte";
+	import Chart from "$lib/components/Chart.svelte";
 
 	let mounted = false;
 	let isReady = false;
@@ -19,8 +19,6 @@
 	let lastTime;
 
 	const dispatch = createEventDispatcher();
-
-	const { key, loading } = currentGame;
 
 	onMount(() => (mounted = true));
 

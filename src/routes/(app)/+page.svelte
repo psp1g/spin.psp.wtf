@@ -2,8 +2,8 @@
 	// import { writable } from "svelte/store";
 	import { currentGame, editorOpen } from "$lib/stores/game";
 	import Wheel from "$lib/components/Wheel.svelte";
-	import Editor from "$lib/components/Editor.svelte";
-	import EmergingTextInput from "$lib/components/EmergingTextInput.svelte";
+	import Editor from "$lib/components/editor/Editor.svelte";
+	import EmergingTextInput from "$lib/components/input/EmergingTextInput.svelte";
 
 	const title = currentGame.store("title");
 
