@@ -5,7 +5,7 @@ import { debounce, shuffle } from "$lib/util";
 import { cycleColors } from "$lib/util/color";
 import { derived, writable } from "svelte/store";
 
-const itemProps = [ 'name', 'color', 'weight' ];
+const itemProps = [ "name", "color", "weight" ];
 
 const storage = localforage.createInstance({ name: "game" });
 
@@ -31,6 +31,21 @@ export const currentGame = {
 		};
 	},
 };
+
+/**
+ * @type {Writable<GAME_TYPE>}
+ */
+export const gameType = currentGame.store("type");
+
+/**
+ * @type {Writable<number>}
+ */
+export const duration = currentGame.store("duration");
+
+/**
+ * @type {Readable<number>}
+ */
+export const durationMs = derived([ duration ], ([ $duration ]) => $duration * 1000);
 
 export const currentItems = {
 	...derived([ currentGame ], ([ $game ]) => $game?.items),

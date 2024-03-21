@@ -133,11 +133,6 @@
 				}
 			}
 
-			:global(.weight) {
-				width: 2em;
-				text-align: right;
-			}
-
 			.weight-info {
 				gap: 6px;
 				width: 108px;

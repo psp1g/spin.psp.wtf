@@ -1,6 +1,6 @@
 import { MODAL } from "$lib/config/modal";
 import { SPIN_STATE } from "$lib/config/states";
-import { currentItems, totalWeight } from "$lib/stores/game";
+import { durationMs, currentItems, totalWeight } from "$lib/stores/game";
 import { currentModal } from "$lib/stores/modal";
 import { state } from "$lib/stores/state";
 import { lerp, sleep, weightedRandom } from "$lib/util/index";
@@ -58,11 +58,6 @@ export const flapperRotation = derived([ rotation ], ([ $rotation ]) => {
  * @type {Writable<int>}
  */
 export const winner = writable();
-
-/**
- * @type {Writable<number>}
- */
-export const duration = writable(8000);
 
 /**
  * @type {Writable<import('chart.js').Chart>}
@@ -127,7 +122,7 @@ export const wheel_states = {
 			const iWinner = weightedRandom(data);
 			winner.set(iWinner);
 
-			const dur = get(duration);
+			const dur = get(durationMs);
 
 			// instantly set to a normalized angle of the current rotation
 			let setPromise = rotation.set(get(rotation) % 360);

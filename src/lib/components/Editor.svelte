@@ -1,14 +1,18 @@
 <script>
 	import click from "$lib/action/click";
+	// import TabOption from "$lib/components/TabOption.svelte";
+	// import { GAME_TYPE } from "$lib/config/game.js";
+	import { tick } from "svelte";
+	import { url } from "$lib/util";
+	import { duration, currentItems, editorOpen, gameType } from "$lib/stores/game";
 
 	import Item from "$lib/components/Item.svelte";
+	import EmergingTextInput from "$lib/components/EmergingTextInput.svelte";
 
 	import gearSVG from "$lib/images/gear.svg";
 	import plusSVG from "$lib/images/plus.svg";
 	import shuffleSVG from "$lib/images/shuffle.svg";
-	import { currentItems, editorOpen } from "$lib/stores/game";
-	import { url } from "$lib/util";
-	import { tick } from "svelte";
+	import durationSVG from "$lib/images/duration.svg";
 
 	const newItem = async () => {
 		currentItems.new();
@@ -24,12 +28,36 @@
 	/>
 
 	<div class="content">
-		<div class="title">Editor</div>
 		<div
 			class="close-editor"
 			use:click={() => editorOpen.set(false)}
-		>X
+		>
+			X
 		</div>
+
+		<div class="title">Editor</div>
+
+		<div class="sub-title">Game Metadata</div>
+
+		<div class="game-options">
+			<div class="duration-wrapper">
+				<EmergingTextInput
+					numerical
+					class="duration"
+					value={$duration}
+					bindTo={duration}
+				/>
+				<div class="icon" style:--mask={url(durationSVG)} />
+			</div>
+
+<!--			<TabOption-->
+<!--				value={$gameType}-->
+<!--				bindTo={gameType}-->
+<!--				options={Object.entries(GAME_TYPE)}-->
+<!--			/>-->
+		</div>
+
+		<div class="sub-title">Items</div>
 
 		<div class="items">
 			{#each $currentItems as { name }, i (name + i)}
@@ -159,8 +187,38 @@
 			}
 
 			.title {
+				font-size: 24px;
+				font-weight: 600;
+			}
+
+			.sub-title {
 				font-size: 20px;
 				font-weight: 600;
+			}
+
+			.game-options {
+				gap: 8px;
+				padding: 12px;
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				justify-content: right;
+				border-radius: 6px;
+				background: #2c2a2a;
+
+				.duration-wrapper {
+					gap: 4px;
+					height: 100%;
+					display: flex;
+
+					.icon {
+						width: 20px;
+						height: 100%;
+						background: #fff;
+						margin-right: 4px;
+						mask: var(--mask) center/contain no-repeat;
+					}
+				}
 			}
 
 			.items {

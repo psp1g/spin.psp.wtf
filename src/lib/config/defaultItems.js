@@ -3,6 +3,7 @@ import { GAME_TYPE } from "$lib/config/game";
 export const defaultGame = {
 	type: GAME_TYPE.Wheel,
 	title: "Marbles Wheel of Death",
+	duration: 10,
 	items: [
 		{
 			name: "Quit Job",

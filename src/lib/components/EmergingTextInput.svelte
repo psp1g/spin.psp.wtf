@@ -39,6 +39,7 @@
 <input
 	{type}
 	{value}
+	class:numerical
 	class="emerging-input {clazz}"
 	spellcheck={$focusedStore}
 	on:input={inputChanged}
@@ -58,6 +59,11 @@
 		border-radius: 8px;
 		font-family: "Kanit";
 		text-overflow: ellipsis;
+
+		&.numerical {
+			width: 2em;
+			text-align: right;
+		}
 
 		&:focus {
 			border: none;

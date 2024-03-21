@@ -6,17 +6,12 @@
 		chartItemData,
 		chartOptions,
 		currentItemPoint,
-		duration,
 		hasFrames,
 		rotation,
 		spinState,
 		wheelChart,
 	} from "$lib/stores/wheel";
 	import { createEventDispatcher, onMount } from "svelte";
-
-	export let items = [];
-
-	export let spinDuration = 10000;
 
 	let mounted = false;
 	let isReady = false;
@@ -57,7 +52,6 @@
 	const options = chartOptions($chartItemData);
 
 	$: $hasFrames && window.requestAnimationFrame(frame)
-	$: duration.set(spinDuration);
 	$: mounted && $wheelChart && !isReady && ready();
 	$: isReady && $currentItems && update();
 </script>

@@ -83,14 +83,12 @@ export const persisted = (keyPrefix, {
 			if (forcePersist ?? autoPersist)
 				return this.persist();
 		},
-		// todo; issue right now is this is being called when the page loads and overrides what is stored
 		/**
 		 * @param {(any) => Promise<any>} callback
 		 * @param {boolean|null} [forcePersist=null] - Force whether to persist or not.
 		 * @return {Promise<void>}
 		 */
 		async update(callback, forcePersist = null) {
-			console.trace();
 			const val = await callback(last);
 			return this.set(val, forcePersist);
 		},
