@@ -110,3 +110,9 @@ export const randomStr = (length = 6) =>
 	)
 		.map((dec) => dec.toString(16).padStart(2, "0"))
 		.join("");
+
+export const truncDecimals = (val, decimals = 2) => {
+	const modifier = Math.pow(10, decimals);
+	const rounded = Math.round(val * modifier);
+	return rounded / modifier;
+}

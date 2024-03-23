@@ -3,7 +3,8 @@
 	import { writable } from "svelte/store"
 
 	import click from "$lib/action/click";
-	import { url } from "$lib/util/index";
+	import tooltip from "$lib/action/tooltip";
+	import { truncDecimals, url } from "$lib/util/index";
 	import { currentItems, editorOpen, totalWeight } from "$lib/stores/game";
 
 	import diceSVG from "$lib/images/icon/dice.svg";
@@ -29,7 +30,8 @@
 	});
 
 	$: pct = $weight / $totalWeight;
-	$: rndPct = Math.round(pct * 10000) / 100;
+	$: rndPct = truncDecimals(pct * 100, 2);
+	$: longerPct = truncDecimals(pct * 100, 6);
 	$: pctText = $weight && rndPct <= 0 ? '<0.01' : rndPct;
 	$: !weightFocused && !$weight && currentItems.delete(i);
 </script>
@@ -55,11 +57,21 @@
 		/>
 
 		<div class="weight-info">
-			<div class="weight-icon">
+			<div
+				class="weight-icon"
+				tip="Item Weight<br/>(Weight / Sum of Weights = % Chance)"
+				use:tooltip
+			>
 				<div class="dice" style:--mask={url(diceSVG)} />
 				<div class="info" style:--mask={url(infoSVG)} />
 			</div>
-			<div class="chance">➛ {pctText}%</div>
+			<div
+				class="chance"
+				tip="{$weight} / {$totalWeight} = {longerPct}%"
+				use:tooltip
+			>
+				➛ {pctText}%
+			</div>
 		</div>
 		<div
 			class="show-advanced"

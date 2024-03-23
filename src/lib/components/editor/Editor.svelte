@@ -96,11 +96,13 @@
 						class="new"
 						mask={plusSVG}
 						onClick={newItem}
+						tip="New Item"
 					/>
 					<Button
 						class="shuffle"
 						mask={shuffleSVG}
 						onClick={() => currentItems.shuffle()}
+						tip="Shuffle Items"
 					/>
 				</div>
 			</div>

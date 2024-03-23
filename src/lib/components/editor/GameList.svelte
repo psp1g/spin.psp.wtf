@@ -69,11 +69,13 @@
 			class="new"
 			mask={plusSVG}
 			onClick={newGame}
+			tip="New Game"
 		/>
 		<Button
 			class="refresh"
 			mask={refreshSVG}
 			onClick={refresh}
+			tip="Refresh List"
 		/>
 	</div>
 </div>

@@ -1,18 +1,22 @@
 <script>
 	import click from "$lib/action/click";
+	import tooltip from "$lib/action/tooltip";
 	import { url } from "$lib/util";
 
 	let clazz = "";
 	export { clazz as class };
 
 	export let mask;
+	export let tip;
 	export let onClick = () => { };
 </script>
 
 <button
+	{tip}
 	class="{clazz}"
 	class:mask={!!mask}
 	use:click={onClick}
+	use:tooltip
 	style:--mask={url(mask)}
 >
 	<slot />
