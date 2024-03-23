@@ -1,7 +1,7 @@
 <script>
 	import click from "$lib/action/click";
 	import { GameTypeIcon } from "$lib/config/game";
-	import { currentGame, gameList, gameListOpen, title } from "$lib/stores/game";
+	import { currentGame, gameList, gameListOpen } from "$lib/stores/game";
 
 	import Button from "$lib/components/input/Button.svelte";
 	import Loading from "$lib/components/Loading.svelte";
