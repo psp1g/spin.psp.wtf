@@ -1,4 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import pkg from "./package.json" assert { type: "json" };
 
 /** @type {import('vite').UserConfig} */
 const config = {
@@ -15,7 +16,7 @@ const config = {
         },
     },
     define: {
-        APP_VERSION: JSON.stringify(process.env.npm_package_version),
+        APP_VERSION: JSON.stringify(pkg.version),
     },
     build: {
         assetsInlineLimit: 0,
