@@ -115,4 +115,57 @@ export const truncDecimals = (val, decimals = 2) => {
 	const modifier = Math.pow(10, decimals);
 	const rounded = Math.round(val * modifier);
 	return rounded / modifier;
-}
+};
+
+export const download = (file) => {
+	const url = URL.createObjectURL(file);
+	const linkElement = document.createElement("a");
+
+	linkElement.href = url;
+	linkElement.download = file.name;
+
+	linkElement.style.opacity = "0";
+	linkElement.style.position = "absolute";
+
+	linkElement.click();
+
+	URL.revokeObjectURL(url);
+	linkElement.remove();
+};
+
+export const upload = (multipleAllowed = false) =>
+	new Promise((res, rej) => {
+		const input = document.createElement("input");
+		input.type = "file";
+		input.multiple = multipleAllowed;
+
+		input.style.opacity = "0";
+		input.style.position = "absolute";
+
+		input.onchange = async (e) => {
+			const promises = Array.from(e.target.files)
+				.map((file) =>
+					new Promise((res, rej) => {
+						const reader = new FileReader();
+						reader.onloadend = (re) => res(re.target.result);
+						reader.onerror = (e) => rej(e);
+						reader.readAsText(file, "UTF-8");
+					})
+				);
+
+			const allFileContent = await Promise.all(promises);
+			res(multipleAllowed ? allFileContent : allFileContent[0]);
+
+			input.remove();
+		};
+		input.addEventListener("cancel", () => {
+			res([]);
+			input.remove();
+		});
+		input.onerror = (e) => {
+			rej(e);
+			input.remove();
+		};
+
+		input.click();
+	});

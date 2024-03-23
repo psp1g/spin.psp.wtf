@@ -1,5 +1,6 @@
 <script>
 	import click from "$lib/action/click";
+	import { download, upload } from "$lib/util";
 	import { GameTypeIcon } from "$lib/config/game";
 	import { currentGame, gameList, gameListOpen } from "$lib/stores/game";
 
@@ -8,7 +9,9 @@
 
 	import plusSVG from "$lib/images/icon/plus.svg";
 	import rightSVG from "$lib/images/icon/right.svg";
+	import importSVG from "$lib/images/icon/import.svg";
 	import refreshSVG from "$lib/images/icon/refresh.svg";
+	import downloadSVG from "$lib/images/icon/download.svg";
 
 	const { key } = currentGame;
 	const { keys, loading } = gameList;
@@ -17,6 +20,19 @@
 	const newGame = () => {
 		currentGame.new();
 		refresh();
+	};
+	const dlJson = () => {
+		const file = new File([JSON.stringify($gameList)], "spin.psp.wtf-games.json", { type: "application/json" });
+		download(file);
+	};
+	const importJson = async () => {
+		const contents = await upload(true);
+		const importedGames = contents
+			.map((json) => JSON.parse(json))
+			.flat();
+
+		await currentGame.import({ values: importedGames });
+		return refresh();
 	};
 
 	//$: $gameListOpen && $title && refresh();
@@ -76,6 +92,18 @@
 			mask={refreshSVG}
 			onClick={refresh}
 			tip="Refresh List"
+		/>
+		<Button
+			class="download"
+			mask={downloadSVG}
+			onClick={dlJson}
+			tip="Export/Backup Saved Games"
+		/>
+		<Button
+			class="download"
+			mask={importSVG}
+			onClick={importJson}
+			tip="Import/Load Saved Games from JSON"
 		/>
 	</div>
 </div>

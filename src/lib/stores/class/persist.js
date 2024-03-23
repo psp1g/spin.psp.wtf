@@ -184,6 +184,20 @@ export const persisted = (keyPrefix, {
 			return this.set(value);
 		},
 		/**
+		 * @param {string[]} keys
+		 * @param {any[]} values
+		 * @return {Promise<void>}
+		 */
+		async import({ keys = [], values }) {
+			if (!values) return Promise.reject("No value(s) provided");
+			await Promise.all(
+				values.map((value, i) => {
+					const keyPromise = !!(keys?.[i]) ? Promise.resolve(keys[i]) : this.randomKey();
+					return keyPromise.then((key) => localForage.setItem(key, JSON.stringify(value)));
+				})
+			);
+		},
+		/**
 		 * Check if there is anything stored with this key
 		 * @param {string} key
 		 * @return {Promise<boolean>}
@@ -202,7 +216,7 @@ export const persisted = (keyPrefix, {
 			// Loop until we get a key that doesn't already exist
 			while ((await this.exists(key))) key = randomKey();
 			return cleanKeyInput(key);
-		}
+		},
 	};
 
 	if (defaultToLastUsedKey) {
