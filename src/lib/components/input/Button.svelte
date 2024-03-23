@@ -3,9 +3,6 @@
 	import tooltip from "$lib/action/tooltip";
 	import { url } from "$lib/util";
 
-	let clazz = "";
-	export { clazz as class };
-
 	export let mask;
 	export let tip;
 	export let onClick = () => { };
@@ -13,7 +10,7 @@
 
 <button
 	{tip}
-	class="{clazz}"
+	class="{$$props.class}"
 	class:mask={!!mask}
 	use:click={onClick}
 	use:tooltip

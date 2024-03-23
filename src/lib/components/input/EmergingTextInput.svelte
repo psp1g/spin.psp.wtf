@@ -2,9 +2,6 @@
 	import focused from "$lib/action/focused";
 	import { writable } from "svelte/store";
 
-	let clazz = "";
-	export { clazz as class };
-
 	export let value;
 	export let bindTo;
 	export let numerical = false;
@@ -40,7 +37,7 @@
 	{type}
 	{value}
 	class:numerical
-	class="emerging-input {clazz}"
+	class="emerging-input {$$props.class}"
 	spellcheck={$focusedStore}
 	on:input={inputChanged}
 	bind:this={element}
