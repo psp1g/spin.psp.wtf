@@ -104,7 +104,7 @@ export const currentItemPoint =
 /**
  * @type {Object<SPIN_STATE, any>}
  */
-export const wheel_states = {
+export const wheelStates = {
 	[SPIN_STATE.waiting]: {
 		toWhitelist: [ SPIN_STATE.spinning ],
 		frame() {
@@ -112,6 +112,7 @@ export const wheel_states = {
 		},
 	},
 	[SPIN_STATE.spinning]: {
+		canUpdateWheel: false,
 		fromWhitelist: [ SPIN_STATE.waiting, SPIN_STATE.won ],
 		toWhitelist: [ SPIN_STATE.won ],
 		async to(store) {
@@ -154,7 +155,7 @@ export const wheel_states = {
 	},
 };
 
-export const spinState = state(SPIN_STATE.waiting, wheel_states);
+export const spinState = state(SPIN_STATE.waiting, wheelStates);
 export const hasFrames = spinState.hasFramesStore();
 
 let sumWeight = 0;

@@ -1,7 +1,7 @@
 <script>
 	import { createEventDispatcher, onDestroy, onMount } from "svelte";
 	import { SPIN_STATE } from "$lib/config/states";
-	import { currentGame, currentItems } from "$lib/stores/game";
+	import { currentItems } from "$lib/stores/game";
 	import {
 		chartItemData,
 		chartOptions,
@@ -9,6 +9,7 @@
 		hasFrames,
 		rotation,
 		spinState,
+		wheelStates,
 		wheelChart,
 	} from "$lib/stores/wheel";
 	import Chart from "$lib/components/Chart.svelte";
@@ -57,8 +58,9 @@
 
 	const options = chartOptions($chartItemData);
 
+	$: canUpdate = wheelStates[$spinState].canUpdateWheel ?? true;
 	$: mounted && $wheelChart && !isReady && ready();
-	$: isReady && $currentItems && update();
+	$: isReady && canUpdate && $currentItems && update();
 </script>
 
 <div class="wheel" style:--rotation={`${$rotation}deg`}>
