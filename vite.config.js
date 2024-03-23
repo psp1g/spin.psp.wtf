@@ -14,6 +14,9 @@ const config = {
             allow: [ 'static' ],
         },
     },
+    define: {
+        APP_VERSION: JSON.stringify(process.env.npm_package_version),
+    },
     build: {
         assetsInlineLimit: 0,
     },

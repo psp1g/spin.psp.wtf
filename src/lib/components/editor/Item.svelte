@@ -6,9 +6,9 @@
 	import { url } from "$lib/util/index";
 	import { currentItems, editorOpen, totalWeight } from "$lib/stores/game";
 
-	import diceSVG from "$lib/images/dice.svg";
-	import downSVG from "$lib/images/down.svg";
-	import infoSVG from "$lib/images/info.svg";
+	import diceSVG from "$lib/images/icon/dice.svg";
+	import downSVG from "$lib/images/icon/down.svg";
+	import infoSVG from "$lib/images/icon/info.svg";
 
 	import ColorPicker from "$lib/components/input/ColorPicker.svelte";
 	import EmergingTextInput from "$lib/components/input/EmergingTextInput.svelte";

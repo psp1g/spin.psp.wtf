@@ -1,7 +1,7 @@
 import localforage from "localforage";
 import { derived, writable } from "svelte/store";
-import { persisted } from "$lib/stores/class/persist";
-import { defaultGame } from "$lib/config/defaultItems";
+import { persisted, persistedList } from "$lib/stores/class/persist";
+import { defaultGame, newGameTemplate } from "$lib/config/default";
 import { debounce, shuffle } from "$lib/util";
 import { cycleColors } from "$lib/util/color";
 
@@ -9,38 +9,57 @@ const itemProps = [ "name", "color", "weight" ];
 
 const storage = localforage.createInstance({ name: "game" });
 
+const persistedPrefix = "game-";
+
+export const gameList = persistedList(persistedPrefix, {
+	refreshNow: false,
+	localForage: storage,
+	// modifier: (games) => games.sort(),
+});
+
 export const currentGame = {
-	...persisted("game-", {
+	...persisted(persistedPrefix, {
 		hydrateNow: true,
 		localForage: storage,
 		defaultRandomKey: true,
 		defaultValue: defaultGame,
 		defaultToLastUsedKey: true,
+		newTemplate: newGameTemplate,
 		dontPersistKeys: [ "default" ],
 	}),
-	store(prop) {
+	store(prop, debounceTime) {
 		const gameThis = this;
+		const updateParent = (value) =>
+			gameThis.update((game) => ({
+				...game,
+				[prop]: value,
+			}));
+
+		const set = debounceTime ? debounce(updateParent, debounceTime) : updateParent;
+
 		return {
 			...derived([ gameThis ], ([ $game ]) => $game[prop]),
-			set(value) {
-				gameThis.update((game) => ({
-					...game,
-					[prop]: value,
-				}));
-			},
+			set,
 		};
 	},
 };
 
+const debounceTime = 200;
+
+/**
+ * @type {Writable<string>}
+ */
+export const title = currentGame.store("title", debounceTime);
+
 /**
  * @type {Writable<GAME_TYPE>}
  */
-export const gameType = currentGame.store("type");
+export const gameType = currentGame.store("type", debounceTime);
 
 /**
  * @type {Writable<number>}
  */
-export const duration = currentGame.store("duration");
+export const duration = currentGame.store("duration", debounceTime);
 
 /**
  * @type {Readable<number>}
@@ -107,4 +126,13 @@ export const totalWeight = derived([ currentItems ], ([ $items ]) =>
 	$items.reduce((acc, { weight }) => acc + weight, 0)
 );
 
-export const editorOpen = writable(false);
+export const gameListOpen = writable(false);
+
+const editorOpenStore = writable(false);
+export const editorOpen = {
+	...editorOpenStore,
+	set(val) {
+		editorOpenStore.set(val);
+		if (!val) gameListOpen.set(false);
+	},
+};

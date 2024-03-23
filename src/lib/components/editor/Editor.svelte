@@ -1,18 +1,30 @@
 <script>
 	import click from "$lib/action/click";
+	import GameList from "$lib/components/editor/GameList.svelte";
+	import Button from "$lib/components/input/Button.svelte";
+	import Loading from "$lib/components/Loading.svelte";
 	import { GAME_TYPE } from "$lib/config/game";
 	import { tick } from "svelte";
 	import { url } from "$lib/util/index";
-	import { duration, currentItems, editorOpen, gameType } from "$lib/stores/game";
+	import {
+		duration,
+		gameType,
+		editorOpen,
+		currentGame,
+		currentItems,
+		gameListOpen,
+	} from "$lib/stores/game";
 
 	import Item from "$lib/components/editor/Item.svelte";
 	import TabOption from "$lib/components/input/TabOption.svelte";
 	import EmergingTextInput from "$lib/components/input/EmergingTextInput.svelte";
 
-	import gearSVG from "$lib/images/gear.svg";
-	import plusSVG from "$lib/images/plus.svg";
-	import shuffleSVG from "$lib/images/shuffle.svg";
-	import durationSVG from "$lib/images/duration.svg";
+	import gearSVG from "$lib/images/icon/gear.svg";
+	import plusSVG from "$lib/images/icon/plus.svg";
+	import shuffleSVG from "$lib/images/icon/shuffle.svg";
+	import durationSVG from "$lib/images/icon/duration.svg";
+
+	const { loading } = currentGame;
 
 	const newItem = async () => {
 		currentItems.new();
@@ -28,6 +40,8 @@
 	/>
 
 	<div class="content">
+		<GameList />
+
 		<div
 			class="close-editor"
 			use:click={() => editorOpen.set(false)}
@@ -37,57 +51,60 @@
 
 		<div class="title">Editor</div>
 
-		<div class="sub-title">Game Metadata</div>
+		<Loading {loading}>
+			<div class="sub-title">Game Metadata</div>
 
-		<div class="game-options">
-			<div class="duration-wrapper">
-				<EmergingTextInput
-					numerical
-					class="duration"
-					value={$duration}
-					bindTo={duration}
+			<div class="game-options">
+				<div class="duration-wrapper">
+					<EmergingTextInput
+						numerical
+						class="duration"
+						value={$duration}
+						bindTo={duration}
+					/>
+					<div class="icon" style:--mask={url(durationSVG)} />
+				</div>
+
+				<TabOption
+					value={$gameType}
+					bindTo={gameType}
+					options={Object.entries(GAME_TYPE)}
 				/>
-				<div class="icon" style:--mask={url(durationSVG)} />
 			</div>
 
-			<TabOption
-				value={$gameType}
-				bindTo={gameType}
-				options={Object.entries(GAME_TYPE)}
-			/>
-		</div>
+			<div class="sub-title">Items ({$currentItems.length})</div>
 
-		<div class="sub-title">Items</div>
-
-		<div class="items">
-			{#each $currentItems as { name }, i (name + i)}
-				<Item {i} />
-			{/each}
-		</div>
-
-		<div class="buttons">
-			<div class="left">
-				<button class="game-list" use:click={() => {}}>
-					Game List
-				</button>
+			<div class="items">
+				{#each $currentItems as { name }, i (name + i)}
+					<Item {i} />
+				{/each}
 			</div>
-			<div class="right">
+
+			<div class="buttons">
 				<button
 					class="new-hidden"
 					on:focus={newItem}
 				/>
-				<button
-					class="mask new"
-					use:click={newItem}
-					style:--mask={url(plusSVG)}
-				/>
-				<button
-					class="mask shuffle"
-					use:click={() => currentItems.shuffle()}
-					style:--mask={url(shuffleSVG)}
-				/>
+
+				<div class="left">
+					<Button class="open-game-list" onClick={() => gameListOpen.set(true)}>
+						Saved Games
+					</Button>
+				</div>
+				<div class="right">
+					<Button
+						class="new"
+						mask={plusSVG}
+						onClick={newItem}
+					/>
+					<Button
+						class="shuffle"
+						mask={shuffleSVG}
+						onClick={() => currentItems.shuffle()}
+					/>
+				</div>
 			</div>
-		</div>
+		</Loading>
 	</div>
 </div>
 
@@ -240,6 +257,15 @@
 			.buttons {
 				display: flex;
 
+				.new-hidden {
+					width: 0;
+					height: 0;
+					padding: 0;
+					border: none;
+					position: absolute;
+					background: transparent;
+				}
+
 				.left, .right {
 					gap: 6px;
 					font-size: 0;
@@ -247,59 +273,23 @@
 					flex-grow: 1;
 					flex-shrink: 1;
 				}
-				.right {
-					flex-flow: row-reverse;
 
-					.new-hidden {
-						width: 0;
-						height: 0;
-						padding: 0;
-						border: none;
-						position: absolute;
-						background: transparent;
-					}
-
-					.new {
-						--bg-color: #0a8a32;
-						--bg-focus: #0f9f3e;
-					}
-				}
-
-				.shuffle, .game-list {
+				.left :global(.open-game-list) {
 					--bg-color: #4e6481;
 					--bg-focus: #485d79;
 				}
 
-				button:not(.new-hidden) {
-					color: #fff;
-					font-weight: 600;
-					border: none;
-					border-radius: 6px;
-					background: var(--bg-color);
-					padding: 8px;
-					height: 40px;
-					position: relative;
+				.right {
+					flex-flow: row-reverse;
 
-					&.mask {
-						width: 40px;
-
-						&::after {
-							content: "";
-							position: absolute;
-							top: 0;
-							left: 0;
-							width: 100%;
-							height: 100%;
-							background: #cecccc;
-							mask: var(--mask) center/contain no-repeat;
-							mask-size: 65%;
-							mask-origin: content-box;
-						}
+					:global(.shuffle) {
+						--bg-color: #4e6481;
+						--bg-focus: #485d79;
 					}
 
-					&:hover {
-						cursor: pointer;
-						background: var(--bg-focus);
+					:global(.new) {
+						--bg-color: #0a8a32;
+						--bg-focus: #0f9f3e;
 					}
 				}
 			}

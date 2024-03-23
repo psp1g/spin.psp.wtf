@@ -47,3 +47,31 @@ export const defaultGame = {
 		},
 	],
 };
+
+export const newGameTemplate = {
+	type: GAME_TYPE.Wheel,
+	title: "New Wheel",
+	duration: 10,
+	items: [
+		{
+			name: "Item 1",
+			weight: 20,
+			color: "#505fc0"
+		},
+		{
+			name: "Item 2",
+			weight: 30,
+			color: "#409340"
+		},
+		{
+			name: "Item 3",
+			weight: 35,
+			color: "#d3a42e"
+		},
+		{
+			name: "Item 4",
+			weight: 5,
+			color: "#b03737"
+		},
+	]
+};

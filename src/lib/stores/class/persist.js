@@ -1,6 +1,6 @@
 import localforage from "localforage";
 import { writable } from "svelte/store";
-import { randomStr } from "$lib/util/index.js";
+import { randomStr, sleep } from "$lib/util/index.js";
 
 /**
  * @template T
@@ -14,6 +14,7 @@ import { randomStr } from "$lib/util/index.js";
  * @property {boolean} [defaultRandomKey=false] - If true, a random string will be generated instead of using `defaultKey`.
  * @property {boolean} [defaultToLastUsedKey=true] - Default to the last used key if available. Overrides `defaultKey` and `defaultRandomKey`
  * @property {LocalForage} [localForage] - Localforage instance to store keys in. Defaults to the global localforage instance.
+ * @property {any} [newTemplate] - Template to use for a new item, or a function that returns a template. If not specified, `defaultValue` is used
  */
 
 /**
@@ -32,6 +33,7 @@ export const persisted = (keyPrefix, {
 	defaultToLastUsedKey = true,
 	dontPersistKeys = [],
 	localForage = localforage,
+	newTemplate = { },
 } = {}) => {
 	const prefixRgx = new RegExp(`^${keyPrefix}`);
 
@@ -49,6 +51,7 @@ export const persisted = (keyPrefix, {
 
 	const store = writable(defaultValue);
 	const keyStore = writable(cleanDefaultKey);
+	const loadingStore = writable(false);
 
 	const persist = {
 		...store,
@@ -60,6 +63,7 @@ export const persisted = (keyPrefix, {
 			 */
 			async set(val, forceHydrate = null) {
 				const key = cleanKeyInput(val);
+				if (lastKey === key) return;
 
 				lastKey = key;
 				keyStore.set(key);
@@ -70,7 +74,12 @@ export const persisted = (keyPrefix, {
 					return persist.hydrate();
 			},
 		},
-		loading: writable(defaultToLastUsedKey),
+		/**
+		 * @type {Readable<boolean>}
+		 */
+		loading: {
+			subscribe: loadingStore.subscribe,
+		},
 		/**
 		 * @param {any} val
 		 * @param {boolean|null} [forcePersist=null] - Force whether to persist or not.
@@ -108,14 +117,15 @@ export const persisted = (keyPrefix, {
 			// If this key isn't persisted, we know we cant hydrate
 			if (dontPersistKeys.includes(lastKey)) return;
 
+			loadingStore.set(true);
 
-			this.loading.set(true);
+			await sleep(200);
 
 			const json = await localForage.getItem(lastKey);
 			const value = json != null ? JSON.parse(json) : json;
 			await this.set(value, false);
 
-			this.loading.set(false);
+			loadingStore.set(false);
 
 			return value;
 		},
@@ -154,21 +164,23 @@ export const persisted = (keyPrefix, {
 		},
 		/**
 		 * Creates a new entry to the persisted storage with the key and value provided.
-		 * @param {string} key
-		 * @param {any} value
+		 * @param {string} [key] - The new stored object's key (if omitted, uses a random key)
+		 * @param {any} [value] - Value of the stored object. (if undefined, uses the new item template/default value)
 		 * @return {Promise<void>}
 		 */
-		async new(key, value) {
-			if (typeof key !== "string") throw "`Key` isn't a string or defined!";
+		async new({ key, value } = {}) {
 			if (value === undefined) {
-				// in this case `key` is the value
-				value = key;
+				// Use the template if available
+				value = defaultValue;
+				if (newTemplate !== undefined)
+					typeof newTemplate === "function" ?
+						value = newTemplate() :
+						value = newTemplate;
+			}
 
-				const randomKey = await this.randomKey();
-				// Will resolve instantly
-				await this.key.set(randomKey, false);
-			} else await this.key.set(key, false);
+			if (value === undefined) return;
 
+			await this.key.set(key ?? await this.randomKey(), false);
 			return this.set(value);
 		},
 		/**
@@ -194,7 +206,7 @@ export const persisted = (keyPrefix, {
 	};
 
 	if (defaultToLastUsedKey) {
-		persist.loading.set(true);
+		loadingStore.set(true);
 
 		localForage.getItem(lastUsedKeyKey)
 			.then(async (key) => {
@@ -205,9 +217,56 @@ export const persisted = (keyPrefix, {
 
 				return persist.key.set(key, hydrateNow || autoHydrate)
 			})
-			.then(() => persist.loading.set(false));
+			.then(() => loadingStore.set(false));
 	} else if (hydrateNow && !dontPersistKeys.includes(lastKey))
 		persist.hydrate();
 
 	return persist;
+};
+
+export const persistedList = (keyPrefix, {
+	localForage = localforage,
+	refreshNow = true,
+	modifier = (v) => v,
+} = {}) => {
+	const store = writable([]);
+	const keysStore = writable([]);
+	const loadingStore = writable(false);
+
+	const list = {
+		subscribe: store.subscribe,
+		keys: {
+			subscribe: keysStore.subscribe,
+		},
+		loading: {
+			subscribe: loadingStore.subscribe,
+		},
+		async refresh() {
+			loadingStore.set(true);
+
+			await sleep(200);
+
+			const allKeys = await localForage.keys();
+			const nsKeys = !keyPrefix ? allKeys : allKeys.filter((key) => key.startsWith(keyPrefix));
+
+			const promises = nsKeys.map(
+				(key) =>
+					localForage.getItem(key)
+						.then((json) => JSON.parse(json))
+			);
+			const values = await (
+				Promise.all(promises)
+					.then((values) => modifier(values))
+			);
+
+			store.set(values);
+			keysStore.set(nsKeys);
+
+			loadingStore.set(false);
+		},
+	};
+
+	if (refreshNow) list.refresh();
+
+	return list;
 };

@@ -1,5 +1,5 @@
 <script>
-	import { createEventDispatcher, onMount } from "svelte";
+	import { createEventDispatcher, onDestroy, onMount } from "svelte";
 	import { SPIN_STATE } from "$lib/config/states";
 	import { currentGame, currentItems } from "$lib/stores/game";
 	import {
@@ -13,14 +13,14 @@
 	} from "$lib/stores/wheel";
 	import Chart from "$lib/components/Chart.svelte";
 
+	spinState.reset();
+
 	let mounted = false;
 	let isReady = false;
 
 	let lastTime;
 
 	const dispatch = createEventDispatcher();
-
-	onMount(() => (mounted = true));
 
 	const ready = () => {
 		isReady = true;
@@ -41,15 +41,22 @@
 	};
 
 	const frame = (now) => {
+		if (!mounted) return;
+		window.requestAnimationFrame(frame);
+		if (!$hasFrames) return;
 		if (!lastTime) lastTime = now;
 		const delta = now - lastTime;
 		spinState.frame($spinState, delta);
-		if ($hasFrames) window.requestAnimationFrame(frame);
 	};
+
+	onMount(() => {
+		mounted = true;
+		window.requestAnimationFrame(frame);
+	});
+	onDestroy(() => (mounted = false));
 
 	const options = chartOptions($chartItemData);
 
-	$: $hasFrames && window.requestAnimationFrame(frame)
 	$: mounted && $wheelChart && !isReady && ready();
 	$: isReady && $currentItems && update();
 </script>

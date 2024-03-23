@@ -32,6 +32,13 @@ export const state = (defaultState, states) => {
 			lastState = newState;
 			store.set(newState);
 		},
+		reset(triggerFunctions = false) {
+			if (triggerFunctions) this.set(defaultState);
+			else {
+				lastState = defaultState;
+				store.set(defaultState);
+			}
+		},
 		hasFramesStore() {
 			return derived([ this ], ([ $state ]) => !!states?.[$state]?.frame);
 		},

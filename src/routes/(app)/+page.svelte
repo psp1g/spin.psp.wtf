@@ -1,14 +1,12 @@
 <script>
-	// import { writable } from "svelte/store";
-	import { currentGame, editorOpen } from "$lib/stores/game";
+	import { title, currentGame, editorOpen } from "$lib/stores/game";
+
 	import Wheel from "$lib/components/Wheel.svelte";
 	import Editor from "$lib/components/editor/Editor.svelte";
+	import Loading from "$lib/components/Loading.svelte";
 	import EmergingTextInput from "$lib/components/input/EmergingTextInput.svelte";
 
-	const title = currentGame.store("title");
-
-	// const desc = writable("");
-	// const descFocused = writable(false);
+	const { key, loading } = currentGame;
 </script>
 
 <div class="page">
@@ -21,17 +19,17 @@
 				value={$title}
 				bindTo={title}
 			/>
-
-			<!--			<textarea-->
-			<!--				class="desc"-->
-			<!--				spellcheck={$descFocused}-->
-			<!--				bind:value={$desc}-->
-			<!--				use:focused={descFocused}-->
-			<!--			/>-->
 		</div>
 
-		<Wheel />
+		<Loading {loading}>
+			<Wheel />
+		</Loading>
 	</div>
+
+	<span class="game-info">
+		{APP_VERSION}<br/>
+		{$key}
+	</span>
 </div>
 
 <style lang="scss">
@@ -76,6 +74,14 @@
 					transform: translateY(-50%);
 				}
 			}
+		}
+
+		.game-info {
+			right: 6px;
+			bottom: 6px;
+			color: #605d5d;
+			text-align: right;
+			position: absolute;
 		}
 	}
 </style>
