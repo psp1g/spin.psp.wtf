@@ -60,12 +60,11 @@
 
 	const options = chartOptions($chartItemData);
 
-	const tickSound = sound(clickMP3, { volume: 0.4 });
+	const tickSound = sound(clickMP3);
 	const playSound = debounce(() => {
 		const soundId = tickSound.play();
-		tickSound.rate(1, soundId);
 		tickSound.fade(1, 0.5, 25, soundId);
-	}, 20, true);
+	}, 10, true);
 
 	$: canUpdate = wheelStates[$spinState].canUpdateWheel ?? true;
 	$: soundEnabled = wheelStates[$spinState].soundEnabled ?? false;

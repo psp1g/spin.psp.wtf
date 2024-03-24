@@ -1,4 +1,4 @@
-import { Howl } from "howler/src/howler.core";
+import { Howl, Howler } from "howler/src/howler.core";
 
 export const sleep = async (ms) =>
 	new Promise((res) => setTimeout(() => res(), ms));
@@ -176,7 +176,8 @@ export const sound = (src, options = { }) =>
 	new Howl({
 		src,
 		loop: false,
-		volume: 1,
 		...options,
 	});
+
+Howler.volume(0.6);
 
