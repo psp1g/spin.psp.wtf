@@ -1,3 +1,5 @@
+import { Howl } from "howler/src/howler.core";
+
 export const sleep = async (ms) =>
 	new Promise((res) => setTimeout(() => res(), ms));
 
@@ -169,3 +171,12 @@ export const upload = (multipleAllowed = false) =>
 
 		input.click();
 	});
+
+export const sound = (src, options = { }) =>
+	new Howl({
+		src,
+		loop: false,
+		volume: 1,
+		...options,
+	});
+

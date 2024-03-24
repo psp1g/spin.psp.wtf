@@ -86,6 +86,7 @@ export const dataTransformed = derived([ chartItemData ], ([ $itemData ]) => {
 		lastMaxDeg = wheelMaxDeg;
 
 		return {
+			i,
 			pct,
 			deg,
 			name,
@@ -112,6 +113,7 @@ export const wheelStates = {
 		},
 	},
 	[SPIN_STATE.spinning]: {
+		soundEnabled: true,
 		canUpdateWheel: false,
 		fromWhitelist: [ SPIN_STATE.waiting, SPIN_STATE.won ],
 		toWhitelist: [ SPIN_STATE.won ],

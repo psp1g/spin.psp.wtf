@@ -1,4 +1,5 @@
 <script>
+	import { sound, debounce } from "$lib/util/index.js";
 	import { createEventDispatcher, onDestroy, onMount } from "svelte";
 	import { SPIN_STATE } from "$lib/config/states";
 	import { currentItems } from "$lib/stores/game";
@@ -13,6 +14,7 @@
 		wheelChart,
 	} from "$lib/stores/wheel";
 	import Chart from "$lib/components/Chart.svelte";
+	import clickMP3 from "$lib/sound/click.mp3";
 
 	spinState.reset();
 
@@ -58,9 +60,19 @@
 
 	const options = chartOptions($chartItemData);
 
+	const tickSound = sound(clickMP3, { volume: 0.4 });
+	const playSound = debounce(() => {
+		const soundId = tickSound.play();
+		tickSound.rate(1, soundId);
+		tickSound.fade(1, 0.5, 25, soundId);
+	}, 20, true);
+
 	$: canUpdate = wheelStates[$spinState].canUpdateWheel ?? true;
+	$: soundEnabled = wheelStates[$spinState].soundEnabled ?? false;
+	$: currentItemPointI = $currentItemPoint?.i;
 	$: mounted && $wheelChart && !isReady && ready();
 	$: isReady && canUpdate && $currentItems && update();
+	$: soundEnabled && currentItemPointI != null && playSound();
 </script>
 
 <div class="wheel" style:--rotation={`${$rotation}deg`}>
