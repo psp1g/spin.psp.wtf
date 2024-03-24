@@ -62,6 +62,7 @@
 						value={$duration}
 						bindTo={duration}
 					/>
+					<span class="s">s</span>
 					<div class="icon" style:--mask={url(durationSVG)} />
 				</div>
 
@@ -236,6 +237,18 @@
 					gap: 4px;
 					height: 100%;
 					display: flex;
+					align-items: center;
+
+					:global(.duration) {
+						padding-right: 16px;
+					}
+
+					.s {
+						// todo; eww
+						margin-right: 8px;
+						margin-left: -18px;
+						margin-top: -2px;
+					}
 
 					.icon {
 						width: 20px;
